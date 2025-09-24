@@ -2,26 +2,39 @@
 
 ## Overview
 
-FluxVault is a Cross-Chain Yield Optimizer dApp built on the **Reactive Lasna testnet**. It demonstrates how to use Reactive Smart Contracts (RSCs) to automatically monitor APY changes across different lending protocols and trigger rebalancing when better yield opportunities arise.
+FluxVault is a **truly cross-chain** Yield Optimizer dApp built using **Reactive Network** technology. It demonstrates real cross-chain monitoring and rebalancing by deploying contracts across multiple blockchains:
 
-## Architecture
+- **🔴 Reactive Layer (Lasna)**: Smart monitoring and decision-making contracts
+- **🔵 Origin Layers (Sepolia, etc.)**: User-facing vaults and protocol integrations
 
-The system consists of four main smart contracts:
+## Multi-Chain Architecture
 
-### Core Contracts (`/smartcontract/`)
+### Reactive Network (Lasna Testnet) - Control Layer
+- **StrategyWatcherRSC**: Monitors APY changes across ALL supported chains
+- **RebalancerRSC**: Executes cross-chain rebalancing decisions
+- **Role**: Centralized intelligence for cross-chain yield optimization
 
-1. **OriginVault.sol** - ERC-20 vault where users deposit tokens and receive shares
-2. **MockLendingAdapter.sol** - Simulates lending protocols with adjustable APY for demo
-3. **StrategyWatcherRSC.sol** - Reactive Smart Contract that monitors APY changes
-4. **RebalancerRSC.sol** - Executes migrations when rebalancing conditions are met
-5. **TestToken.sol** - ERC-20 test token for demonstrations
+### Origin Chains (Sepolia, Arbitrum, etc.) - Asset Layer  
+- **OriginVault**: Where users deposit and manage their assets
+- **LendingAdapters**: Integrations with real protocols (Aave, Compound, etc.)
+- **Role**: Asset custody and protocol-specific yield generation
 
-### How It Works
+## How True Cross-Chain Works
 
-1. **User Deposits**: Users deposit test tokens into the OriginVault and receive shares
-2. **APY Monitoring**: StrategyWatcherRSC subscribes to APY change events from adapters
-3. **Automatic Rebalancing**: When APY changes meet thresholds, RebalancerRSC executes migrations
-4. **Cross-Chain Operations**: All powered by Reactive Network's cross-chain capabilities
+1. **👤 User Deposits**: Users deposit on any supported chain (e.g., Sepolia)
+2. **👁️ Cross-Chain Monitoring**: Reactive contracts on Lasna monitor APY across all chains  
+3. **🤖 Automatic Rebalancing**: When better yields are found, assets bridge to optimal chains
+4. **💰 Yield Optimization**: Users earn highest yields without manual chain switching
+
+### Deployed Contracts
+
+#### 🔴 Lasna Testnet (Reactive Layer):
+- StrategyWatcher: `0x55e5B3A258d3F4f3a74883E34741DA0159093c2B`
+- Rebalancer: `0x15D102AbBa1F856434863a9DFCfDD999EA2FFb36`
+
+#### 🔵 Sepolia Testnet (Origin Layer):
+- OriginVault: `0x4AB4a316B3D0fa0e17F1e7C28d48af6C27A61329`
+- AaveAdapter: `0xCc7286e01efF2d988b6937c1B56c2CebD65b56e8`
 
 ## Getting Started
 
