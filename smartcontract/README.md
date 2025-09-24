@@ -1,112 +1,58 @@
-# FluxVault - Cross-Chain Yield Optimizer# FluxVault - Cross-Chain Yield Optimizer dApp
+# FluxVault - Cross-Chain Yield Optimizer dApp
 
+## Overview
 
+FluxVault is a Cross-Chain Yield Optimizer dApp built on the **Reactive Lasna testnet**. It demonstrates how to use Reactive Smart Contracts (RSCs) to automatically monitor APY changes across different lending protocols and trigger rebalancing when better yield opportunities arise.
 
-## Project Structure## Overview
+## Architecture
 
+The system consists of four main smart contracts:
 
+### Core Contracts (`/smartcontract/`)
 
-All project files have been moved to the `smartcontract` folder for better organization:FluxVault is a Cross-Chain Yield Optimizer dApp built on the **Reactive Lasna testnet**. It demonstrates how to use Reactive Smart Contracts (RSCs) to automatically monitor APY changes across different lending protocols and trigger rebalancing when better yield opportunities arise.
+1. **OriginVault.sol** - ERC-20 vault where users deposit tokens and receive shares
+2. **MockLendingAdapter.sol** - Simulates lending protocols with adjustable APY for demo
+3. **StrategyWatcherRSC.sol** - Reactive Smart Contract that monitors APY changes
+4. **RebalancerRSC.sol** - Executes migrations when rebalancing conditions are met
+5. **TestToken.sol** - ERC-20 test token for demonstrations
 
-
-
-```## Architecture
-
-FluxVault/
-
-├── smartcontract/              # Main project directoryThe system consists of four main smart contracts:
-
-│   ├── *.sol                   # Smart contracts
-
-│   ├── lib/                    # Dependencies (reactive-lib)### Core Contracts (`/smartcontract/`)
-
-│   ├── scripts/                # Deployment scripts
-
-│   ├── package.json            # Node.js dependencies1. **OriginVault.sol** - ERC-20 vault where users deposit tokens and receive shares
-
-│   ├── hardhat.config.js       # Hardhat configuration2. **MockLendingAdapter.sol** - Simulates lending protocols with adjustable APY for demo
-
-│   ├── .env.example            # Environment template3. **StrategyWatcherRSC.sol** - Reactive Smart Contract that monitors APY changes
-
-│   ├── README.md               # Detailed documentation4. **RebalancerRSC.sol** - Executes migrations when rebalancing conditions are met
-
-│   └── remappings.txt          # Import mappings5. **TestToken.sol** - ERC-20 test token for demonstrations
-
-├── .git/                       # Git repository
-
-└── LICENSE                     # MIT License### How It Works
-
-```
+### How It Works
 
 1. **User Deposits**: Users deposit test tokens into the OriginVault and receive shares
-
-## Quick Start2. **APY Monitoring**: StrategyWatcherRSC subscribes to APY change events from adapters
-
+2. **APY Monitoring**: StrategyWatcherRSC subscribes to APY change events from adapters
 3. **Automatic Rebalancing**: When APY changes meet thresholds, RebalancerRSC executes migrations
+4. **Cross-Chain Operations**: All powered by Reactive Network's cross-chain capabilities
 
-1. Navigate to the smartcontract directory:4. **Cross-Chain Operations**: All powered by Reactive Network's cross-chain capabilities
-
-```bash
-
-cd smartcontract## Getting Started
-
-```
+## Getting Started
 
 ### Prerequisites
 
-2. Install dependencies:
-
-```bash- Node.js (v16+)
-
-npm install- npm or yarn
-
-```- A wallet with Lasna testnet REACT tokens
-
+- Node.js (v16+)
+- npm or yarn
+- A wallet with Lasna testnet REACT tokens
 - Private key for deployment
 
-3. Configure environment:
+### Installation
 
-```bash### Installation
-
-cp .env.example .env
-
-# Edit .env with your private key1. Clone the repository:
-
-``````bash
-
+1. Clone the repository:
+```bash
 git clone <repository-url>
-
-4. Deploy to Lasna testnet:cd FluxVault
-
-```bash```
-
-npm run deploy:lasna
-
-npm run register2. Install dependencies:
-
-npm run demo```bash
-
-```npm install
-
+cd FluxVault
 ```
 
-## About
+2. Install dependencies:
+```bash
+npm install
+```
 
 3. Copy and configure environment variables:
-
-FluxVault is a Cross-Chain Yield Optimizer dApp built on Reactive Network's Lasna testnet. It automatically monitors APY changes across lending protocols and triggers rebalancing for optimal yield.```bash
-
+```bash
 cp .env.example .env
-
-For detailed documentation, see [smartcontract/README.md](smartcontract/README.md).# Edit .env with your private key and RPC URLs
-
+# Edit .env with your private key and RPC URLs
 ```
-
-## License
 
 ### Configuration
 
-MIT License - see [LICENSE](LICENSE) for details.
 Edit `.env` file with your details:
 
 ```env

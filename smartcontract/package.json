@@ -1,0 +1,31 @@
+{
+  "name": "fluxvault",
+  "version": "1.0.0",
+  "description": "Cross-Chain Yield Optimizer dApp on Reactive Lasna testnet",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:lasna": "node scripts/lasna-deploy.js",
+    "register": "node scripts/register-subscription.js",
+    "demo": "node scripts/trigger-demo.js",
+    "clean": "hardhat clean"
+  },
+  "keywords": [
+    "defi",
+    "yield-optimization",
+    "reactive-network",
+    "cross-chain"
+  ],
+  "author": "FluxVault Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "ethers": "^6.8.0"
+  }
+}
