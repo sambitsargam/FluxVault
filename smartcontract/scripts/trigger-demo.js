@@ -47,23 +47,26 @@ async function main() {
         console.log(`User Token Balance: ${ethers.formatEther(userTokenBalance)} FLUX`);
         console.log(`User Vault Shares: ${ethers.formatEther(userVaultShares)} fFLUX`);
         console.log(`Vault Total Assets: ${ethers.formatEther(vaultTotalAssets)} FLUX`);
-        console.log(`Current Adapter APY: ${(currentAPY / 100).toFixed(2)}%`);
+        console.log(`Current Adapter APY: ${(Number(currentAPY) / 100).toFixed(2)}%`);
         
         // Get rebalancing thresholds
         const [minThreshold, maxThreshold, rebalanceThreshold] = await strategyWatcher.getThresholds();
         console.log(`\nRebalancing Thresholds:`);
-        console.log(`  Min APY: ${(minThreshold / 100).toFixed(2)}%`);
-        console.log(`  Max APY: ${(maxThreshold / 100).toFixed(2)}%`);
-        console.log(`  Rebalance Trigger: ${(rebalanceThreshold / 100).toFixed(2)}%`);
+        console.log(`  Min APY: ${(Number(minThreshold) / 100).toFixed(2)}%`);
+        console.log(`  Max APY: ${(Number(maxThreshold) / 100).toFixed(2)}%`);
+        console.log(`  Rebalance Trigger: ${(Number(rebalanceThreshold) / 100).toFixed(2)}%`);
 
         // Step 1: User deposits more tokens
-        console.log("\n1️⃣ USER DEPOSITS TEST TOKENS");
-        console.log("==============================");
-        
-        const depositAmount = ethers.parseEther("500");
-        console.log(`Depositing ${ethers.formatEther(depositAmount)} FLUX to vault...`);
-        
-        // Ensure user has enough tokens and approve vault
+    console.log("\n1️⃣ USER DEPOSITS TEST TOKENS");
+    console.log("==============================");
+    
+    // First mint some test tokens to the user for demo
+    const mintAmount = ethers.parseEther("10000");
+    console.log(`Minting ${ethers.formatEther(mintAmount)} FLUX to user for demo...`);
+    await fluxToken.mint(deployer.address, mintAmount);
+    
+    const depositAmount = ethers.parseEther("500");
+    console.log(`Depositing ${ethers.formatEther(depositAmount)} FLUX to vault...`);        // Ensure user has enough tokens and approve vault
         await fluxToken.approve(ORIGIN_VAULT_ADDR, depositAmount);
         await originVault.deposit(depositAmount, deployer.address);
         
@@ -79,8 +82,8 @@ async function main() {
         console.log("=========================================");
         
         const newLowAPY = 150; // 1.5% - below minimum threshold
-        console.log(`Current APY: ${(currentAPY / 100).toFixed(2)}%`);
-        console.log(`Updating APY to: ${(newLowAPY / 100).toFixed(2)}% (below ${(minThreshold / 100).toFixed(2)}% threshold)`);
+        console.log(`Current APY: ${(Number(currentAPY) / 100).toFixed(2)}%`);
+        console.log(`Updating APY to: ${(Number(newLowAPY) / 100).toFixed(2)}% (below ${(Number(minThreshold) / 100).toFixed(2)}% threshold)`);
         
         // This should trigger the StrategyWatcherRSC
         const tx = await mockAdapter.updateAPY(newLowAPY);
@@ -95,7 +98,7 @@ async function main() {
         
         // Check if the StrategyWatcherRSC received the event
         const lastKnownAPY = await strategyWatcher.getLastKnownAPY(MOCK_ADAPTER_ADDR);
-        console.log(`Strategy Watcher Last Known APY: ${(lastKnownAPY / 100).toFixed(2)}%`);
+        console.log(`Strategy Watcher Last Known APY: ${(Number(lastKnownAPY) / 100).toFixed(2)}%`);
         
         if (lastKnownAPY.toString() === newLowAPY.toString()) {
             console.log("✅ Reactive subscription working! StrategyWatcherRSC detected the APY change");
@@ -112,8 +115,8 @@ async function main() {
         
         if (wouldTrigger) {
             console.log("🎯 Conditions met for rebalancing:");
-            console.log(`   - APY dropped to ${(newLowAPY / 100).toFixed(2)}% (below ${(minThreshold / 100).toFixed(2)}% threshold)`);
-            console.log(`   - Difference: ${((currentAPY - newLowAPY) / 100).toFixed(2)}% (above ${(rebalanceThreshold / 100).toFixed(2)}% trigger)`);
+            console.log(`   - APY dropped to ${(Number(newLowAPY) / 100).toFixed(2)}% (below ${(Number(minThreshold) / 100).toFixed(2)}% threshold)`);
+            console.log(`   - Difference: ${((Number(currentAPY) - Number(newLowAPY)) / 100).toFixed(2)}% (above ${(Number(rebalanceThreshold) / 100).toFixed(2)}% trigger)`);
         }
 
         // Step 4: Test another APY change to show high yield scenario
@@ -121,7 +124,7 @@ async function main() {
         console.log("===========================================");
         
         const newHighAPY = 1200; // 12% - above maximum threshold
-        console.log(`Updating APY to: ${(newHighAPY / 100).toFixed(2)}% (above ${(maxThreshold / 100).toFixed(2)}% threshold)`);
+        console.log(`Updating APY to: ${(Number(newHighAPY) / 100).toFixed(2)}% (above ${(Number(maxThreshold) / 100).toFixed(2)}% threshold)`);
         
         const tx2 = await mockAdapter.updateAPY(newHighAPY);
         const receipt2 = await tx2.wait();
@@ -133,7 +136,7 @@ async function main() {
         await new Promise(resolve => setTimeout(resolve, 5000));
         
         const latestKnownAPY = await strategyWatcher.getLastKnownAPY(MOCK_ADAPTER_ADDR);
-        console.log(`Latest Strategy Watcher APY: ${(latestKnownAPY / 100).toFixed(2)}%`);
+        console.log(`Latest Strategy Watcher APY: ${(Number(latestKnownAPY) / 100).toFixed(2)}%`);
 
         // Step 5: Demonstrate vault operations
         console.log("\n5️⃣ VAULT OPERATIONS DEMO");
@@ -143,7 +146,7 @@ async function main() {
         const finalVaultAssets = await originVault.totalAssets();
         const finalUserShares = await originVault.balanceOf(deployer.address);
         
-        console.log(`Final APY: ${(finalAPY / 100).toFixed(2)}%`);
+        console.log(`Final APY: ${(Number(finalAPY) / 100).toFixed(2)}%`);
         console.log(`Vault Total Assets: ${ethers.formatEther(finalVaultAssets)} FLUX`);
         console.log(`User Shares: ${ethers.formatEther(finalUserShares)} fFLUX`);
         
@@ -168,7 +171,7 @@ async function main() {
         console.log(`Vault Address: ${ORIGIN_VAULT_ADDR}`);
         console.log(`Strategy Watcher: ${STRATEGY_WATCHER_ADDR}`);
         console.log(`Rebalancer: ${REBALANCER_ADDR}`);
-        console.log(`Current APY: ${(finalAPY / 100).toFixed(2)}%`);
+        console.log(`Current APY: ${(Number(finalAPY) / 100).toFixed(2)}%`);
         console.log(`Total Assets Under Management: ${ethers.formatEther(finalVaultAssets)} FLUX`);
         
         console.log("\n🔍 Monitor your contracts:");

@@ -7,8 +7,8 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy:lasna": "node scripts/lasna-deploy.js",
-    "register": "node scripts/register-subscription.js",
-    "demo": "node scripts/trigger-demo.js",
+    "register": "npx hardhat run scripts/register-subscription.js --network lasna",
+    "demo": "npx hardhat run scripts/trigger-demo.js --network lasna",
     "clean": "hardhat clean"
   },
   "keywords": [

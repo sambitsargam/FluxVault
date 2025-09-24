@@ -46,9 +46,9 @@ async function main() {
         // Get thresholds for information
         console.log("\n3️⃣ Current rebalancing thresholds:");
         const [minThreshold, maxThreshold, rebalanceThreshold] = await strategyWatcher.getThresholds();
-        console.log(`   Min APY Threshold: ${minThreshold.toString()} basis points (${(minThreshold / 100).toFixed(2)}%)`);
-        console.log(`   Max APY Threshold: ${maxThreshold.toString()} basis points (${(maxThreshold / 100).toFixed(2)}%)`);
-        console.log(`   Rebalance Threshold: ${rebalanceThreshold.toString()} basis points (${(rebalanceThreshold / 100).toFixed(2)}%)`);
+        console.log(`   Min APY Threshold: ${minThreshold.toString()} basis points (${(Number(minThreshold) / 100).toFixed(2)}%)`);
+        console.log(`   Max APY Threshold: ${maxThreshold.toString()} basis points (${(Number(maxThreshold) / 100).toFixed(2)}%)`);
+        console.log(`   Rebalance Threshold: ${rebalanceThreshold.toString()} basis points (${(Number(rebalanceThreshold) / 100).toFixed(2)}%)`);
 
         // Check current APY from the adapter
         console.log("\n4️⃣ Checking current adapter status...");
@@ -58,8 +58,8 @@ async function main() {
         const currentAPY = await mockAdapter.getCurrentAPY();
         const lastKnownAPY = await strategyWatcher.getLastKnownAPY(MOCK_ADAPTER_ADDR);
         
-        console.log(`   Current APY: ${currentAPY.toString()} basis points (${(currentAPY / 100).toFixed(2)}%)`);
-        console.log(`   Last Known APY by Watcher: ${lastKnownAPY.toString()} basis points (${(lastKnownAPY / 100).toFixed(2)}%)`);
+        console.log(`   Current APY: ${currentAPY.toString()} basis points (${(Number(currentAPY) / 100).toFixed(2)}%)`);
+        console.log(`   Last Known APY by Watcher: ${lastKnownAPY.toString()} basis points (${(Number(lastKnownAPY) / 100).toFixed(2)}%)`);
 
         // Test subscription functionality by triggering a manual APY update
         console.log("\n5️⃣ Testing reactive subscription...");
@@ -69,7 +69,7 @@ async function main() {
         const newAPY = 250; // 2.5% - below the minimum threshold of 3%
         await mockAdapter.updateAPY(newAPY);
         
-        console.log(`   ✅ APY updated to ${newAPY} basis points (${(newAPY / 100).toFixed(2)}%)`);
+        console.log(`   ✅ APY updated to ${newAPY} basis points (${(Number(newAPY) / 100).toFixed(2)}%)`);
         console.log("   📡 This should trigger the StrategyWatcherRSC via reactive subscription");
         
         // Wait a moment for the reactive system to process
@@ -91,8 +91,8 @@ async function main() {
         console.log("========================");
         console.log(`Strategy Watcher: ${STRATEGY_WATCHER_ADDR}`);
         console.log(`Monitoring Adapter: ${MOCK_ADAPTER_ADDR}`);
-        console.log(`Current APY: ${(newAPY / 100).toFixed(2)}%`);
-        console.log(`Rebalancing Threshold: ${(rebalanceThreshold / 100).toFixed(2)}%`);
+        console.log(`Current APY: ${(Number(newAPY) / 100).toFixed(2)}%`);
+        console.log(`Rebalancing Threshold: ${(Number(rebalanceThreshold) / 100).toFixed(2)}%`);
         console.log("\n🔍 Monitor the reactive system:");
         console.log(`   Lasna Explorer: https://lasna.reactscan.net/address/${STRATEGY_WATCHER_ADDR}`);
         
