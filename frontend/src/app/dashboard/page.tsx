@@ -1,305 +1,265 @@
+'use client'
+
+import { useFluxVault } from '../../hooks/useFluxVault'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+
 export default function Dashboard() {
+  const { isConnected } = useAccount()
+  const { connect, connectors } = useConnect()
+  const { disconnect } = useDisconnect()
+  
+  const {
+    address,
+    nativeBalance,
+    nativeSymbol,
+    tokenBalance,
+    vaultShares,
+    totalAssets,
+    currentAPY,
+    contracts,
+    approveToken,
+    depositToVault,
+    redeemFromVault,
+    isPending,
+    isSuccess,
+    error,
+    isLasna,
+    isSepolia,
+    explorerUrl
+  } = useFluxVault()
+
+  const [depositAmount, setDepositAmount] = useState('')
+  const [withdrawShares, setWithdrawShares] = useState('')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!isConnected) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">FluxVault Dashboard</h1>
+          <p className="text-gray-600 mb-8">Connect your wallet to access the cross-chain yield optimizer</p>
+          <div className="space-y-4 max-w-sm mx-auto">
+            {mounted && connectors.map((connector) => (
+              <button
+                key={connector.uid}
+                onClick={() => connect({ connector })}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors block w-full"
+              >
+                Connect {connector.name}
+              </button>
+            ))}
+            {!mounted && (
+              <div className="animate-pulse">
+                <div className="bg-gray-300 h-12 rounded-lg mb-4"></div>
+                <div className="bg-gray-300 h-12 rounded-lg"></div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const chainName = isLasna ? 'Reactive Lasna' : isSepolia ? 'Sepolia' : 'Unknown Chain'
+  const chainColor = isLasna ? 'text-red-600' : isSepolia ? 'text-blue-600' : 'text-gray-600'
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <a href="/" className="text-2xl font-bold text-blue-600">
-                FluxVault
-              </a>
+              <Link href="/" className="text-2xl font-bold text-blue-600">FluxVault Dashboard</Link>
             </div>
-            
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="/dashboard" className="text-blue-600 font-medium">Dashboard</a>
-              <a href="/vault" className="text-gray-600 hover:text-blue-600 transition-colors">Vault</a>
-              <a href="/adapters" className="text-gray-600 hover:text-blue-600 transition-colors">Adapters</a>
-              <a href="/rebalancer" className="text-gray-600 hover:text-blue-600 transition-colors">Rebalancer</a>
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                0x1234...5678
+            <div className="flex items-center space-x-4">
+              <div className="text-sm">
+                <div className="text-gray-600">Connected to:</div>
+                <div className={`font-semibold ${chainColor}`}>{chainName}</div>
+              </div>
+              <button
+                onClick={() => disconnect()}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Disconnect
               </button>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <p className="text-gray-600">Monitor your yield farming positions and performance</p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Value Locked</p>
-                <p className="text-2xl font-bold text-gray-900">$24,567.89</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Account Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <div className="text-sm text-gray-600">Wallet Address</div>
+              <div className="font-mono text-sm">
+                {mounted && address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Loading...'}
               </div>
             </div>
-            <div className="mt-4">
-              <span className="text-green-600 text-sm font-medium">+12.5%</span>
-              <span className="text-gray-600 text-sm ml-1">from last month</span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Yield Earned</p>
-                <p className="text-2xl font-bold text-gray-900">$2,345.67</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
+            <div>
+              <div className="text-sm text-gray-600">{nativeSymbol || 'ETH'} Balance</div>
+              <div className="font-semibold">
+                {mounted ? parseFloat(nativeBalance || '0').toFixed(4) : '--'}
               </div>
             </div>
-            <div className="mt-4">
-              <span className="text-green-600 text-sm font-medium">+8.3%</span>
-              <span className="text-gray-600 text-sm ml-1">this month</span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Current APY</p>
-                <p className="text-2xl font-bold text-gray-900">15.2%</p>
-              </div>
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+            <div>
+              <div className="text-sm text-gray-600">FLUX Balance</div>
+              <div className="font-semibold">
+                {mounted ? parseFloat(tokenBalance || '0').toFixed(2) : '--'}
               </div>
             </div>
-            <div className="mt-4">
-              <span className="text-green-600 text-sm font-medium">+2.1%</span>
-              <span className="text-gray-600 text-sm ml-1">vs market avg</span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Active Strategies</p>
-                <p className="text-2xl font-bold text-gray-900">3</p>
+            <div>
+              <div className="text-sm text-gray-600">Vault Shares</div>
+              <div className="font-semibold">
+                {mounted ? parseFloat(vaultShares || '0').toFixed(2) : '--'}
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-            </div>
-            <div className="mt-4">
-              <span className="text-blue-600 text-sm font-medium">2 optimized</span>
-              <span className="text-gray-600 text-sm ml-1">automatically</span>
             </div>
           </div>
         </div>
 
-        {/* Positions Table */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Your Positions</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strategy</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">APY</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yield Earned</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-blue-600 font-semibold text-sm">USDC</span>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">USDC</div>
-                        <div className="text-sm text-gray-500">Ethereum</div>
-                      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold mb-4">Vault Operations</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="font-semibold mb-2">Vault Statistics</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-gray-600">Total Assets</div>
+                    <div className="font-semibold">
+                      {mounted ? parseFloat(totalAssets || '0').toFixed(2) : '--'} FLUX
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Compound Lending</div>
-                    <div className="text-sm text-gray-500">Adapter #1</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">10,000 USDC</div>
-                    <div className="text-sm text-gray-500">$10,000.00</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      12.5%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">$1,250.00</div>
-                    <div className="text-sm text-gray-500">+$104.17 this month</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Active
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-yellow-600 font-semibold text-sm">WETH</span>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">WETH</div>
-                        <div className="text-sm text-gray-500">Ethereum</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Aave Lending</div>
-                    <div className="text-sm text-gray-500">Adapter #2</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">5 WETH</div>
-                    <div className="text-sm text-gray-500">$12,500.00</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      18.7%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">$2,337.50</div>
-                    <div className="text-sm text-gray-500">+$194.79 this month</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Optimizing
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-purple-600 font-semibold text-sm">DAI</span>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">DAI</div>
-                        <div className="text-sm text-gray-500">Polygon</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Yearn Vault</div>
-                    <div className="text-sm text-gray-500">Adapter #3</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">2,067.89 DAI</div>
-                    <div className="text-sm text-gray-500">$2,067.89</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      14.2%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">$293.64</div>
-                    <div className="text-sm text-gray-500">+$24.47 this month</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Active
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-8 bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-          </div>
-          <div className="divide-y divide-gray-200">
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Automatic Rebalancing</p>
-                    <p className="text-sm text-gray-500">WETH moved to higher APY strategy (18.7%)</p>
+                    <div className="text-gray-600">Current APY</div>
+                    <div className="font-semibold text-green-600">
+                      {mounted ? currentAPY || '0' : '--'}%
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-900">2 hours ago</p>
-                  <p className="text-sm text-green-600 font-medium">+6.2% APY</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Deposit FLUX Tokens
+                </label>
+                <div className="flex space-x-2">
+                  <input
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="Amount to deposit"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={() => approveToken(depositAmount)}
+                    disabled={!depositAmount || isPending}
+                    className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 disabled:opacity-50"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => depositToVault(depositAmount)}
+                    disabled={!depositAmount || isPending}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                  >
+                    {isPending ? 'Depositing...' : 'Deposit'}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Withdraw Vault Shares
+                </label>
+                <div className="flex space-x-2">
+                  <input
+                    type="number"
+                    value={withdrawShares}
+                    onChange={(e) => setWithdrawShares(e.target.value)}
+                    placeholder="Shares to withdraw"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={() => redeemFromVault(withdrawShares)}
+                    disabled={!withdrawShares || isPending}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {isPending ? 'Withdrawing...' : 'Withdraw'}
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Deposit</p>
-                    <p className="text-sm text-gray-500">5,000 USDC deposited to Origin Vault</p>
-                  </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold mb-4">Contract Information</h2>
+            
+            <div className="space-y-4">
+              {mounted && contracts.originVault && (
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Origin Vault (Sepolia)</div>
+                  <a
+                    href={`${explorerUrl}/address/${contracts.originVault}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 font-mono text-xs break-all"
+                  >
+                    {contracts.originVault}
+                  </a>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-900">1 day ago</p>
-                  <p className="text-sm text-gray-900">5,000 USDC</p>
+              )}
+              
+              {mounted && contracts.strategyWatcher && (
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Strategy Watcher (Lasna)</div>
+                  <a
+                    href={`${explorerUrl}/address/${contracts.strategyWatcher}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 font-mono text-xs break-all"
+                  >
+                    {contracts.strategyWatcher}
+                  </a>
                 </div>
-              </div>
-            </div>
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
-                    <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Yield Claimed</p>
-                    <p className="text-sm text-gray-500">$1,250.00 USDC yield claimed</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-900">3 days ago</p>
-                  <p className="text-sm text-green-600 font-medium">+$1,250.00</p>
+              )}
+
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h3 className="font-semibold text-blue-900 mb-2">Cross-Chain Architecture</h3>
+                <div className="text-blue-800 text-sm space-y-1">
+                  <p>• Sepolia: Origin vault for deposits/withdrawals</p>
+                  <p>• Reactive Lasna: Strategy monitoring & rebalancing</p>
+                  <p>• Real-time cross-chain synchronization</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {error && (
+          <div className="mt-8 bg-red-50 border border-red-200 rounded-md p-4">
+            <div className="text-red-800">
+              <strong>Error:</strong> {error.message}
+            </div>
+          </div>
+        )}
+
+        {isSuccess && (
+          <div className="mt-8 bg-green-50 border border-green-200 rounded-md p-4">
+            <div className="text-green-800">
+              <strong>Success:</strong> Transaction completed successfully!
+            </div>
+          </div>
+        )}
       </div>
     </div>
-  );
+  )
 }

@@ -1,0 +1,22 @@
+{
+  "network": "lasna",
+  "contracts": {
+    "fluxToken": "0xFeDFF163D7139e0F3b1C0d012e9a39CDfd539092",
+    "mockAdapter": "0x4a66F27329Cc3410a9dCc61A019a60A0767c127E",
+    "originVault": "0x497Dfac7C307FBAF85f083c438b88710c9cc4915",
+    "rebalancerRSC": "0x15D102AbBa1F856434863a9DFCfDD999EA2FFb36",
+    "strategyWatcherRSC": "0x55e5B3A258d3F4f3a74883E34741DA0159093c2B"
+  },
+  "deployer": "0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B",
+  "sepolia": {
+    "network": "sepolia",
+    "chainId": 11155111,
+    "contracts": {
+      "fluxTokenSepolia": "0x0AF28FaE437CBa8A7C91224E1a8E9fE31d2fb19b",
+      "originVaultSepolia": "0x4AB4a316B3D0fa0e17F1e7C28d48af6C27A61329",
+      "aaveAdapterSepolia": "0xCc7286e01efF2d988b6937c1B56c2CebD65b56e8"
+    },
+    "deployer": "0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B",
+    "deployedAt": "2025-09-24T02:16:53.395Z"
+  }
+}
