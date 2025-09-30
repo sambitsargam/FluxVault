@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
@@ -134,7 +136,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Deposit Assets</h3>
               <p className="text-gray-600">
-                Deposit your tokens into FluxVault's smart contracts. Support for major tokens across multiple blockchains.
+                Deposit your tokens into FluxVault&apos;s smart contracts. Support for major tokens across multiple blockchains.
               </p>
             </div>
             
@@ -168,11 +170,28 @@ export default function Home() {
             Ready to Optimize Your DeFi Strategy?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join the future of cross-chain yield farming with FluxVault's intelligent automation.
+            Join the future of cross-chain yield farming with FluxVault&apos;s intelligent automation.
           </p>
-          <button className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
-            Launch FluxVault
-          </button>
+          <div className="space-x-4">
+            <Link 
+              href="/dashboard"
+              className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+            >
+              Launch FluxVault
+            </Link>
+            <Link 
+              href="/onchain"
+              className="bg-blue-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-400 transition-colors inline-block"
+            >
+              Test On-Chain
+            </Link>
+            <Link 
+              href="/demo"
+              className="bg-green-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-400 transition-colors inline-block"
+            >
+              Try Demo
+            </Link>
+          </div>
         </div>
       </section>
 

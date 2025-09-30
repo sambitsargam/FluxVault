@@ -86,6 +86,30 @@ export const FLUX_TOKEN_ABI = [
     "name": "totalSupply",
     "outputs": [{"type": "uint256"}],
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{"type": "uint8"}],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [{"type": "string"}],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [{"type": "string"}],
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "amount", "type": "uint256"}],
+    "name": "faucet",
+    "outputs": [],
+    "type": "function"
   }
 ] as const
 

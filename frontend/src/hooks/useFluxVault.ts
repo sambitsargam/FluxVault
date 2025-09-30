@@ -129,6 +129,18 @@ export function useFluxVault() {
     })
   }
 
+  const claimFluxTokens = (amount: string) => {
+    const tokenAddress = getContractAddress('fluxToken')
+    if (!tokenAddress) return
+
+    writeContract({
+      address: tokenAddress as `0x${string}`,
+      abi: FLUX_TOKEN_ABI,
+      functionName: 'faucet',
+      args: [parseUnits(amount, 18)],
+    })
+  }
+
   const updateAPY = (newAPY: number) => {
     if (!adapterAddress) return
 
@@ -178,6 +190,7 @@ export function useFluxVault() {
     approveToken,
     depositToVault,
     redeemFromVault,
+    claimFluxTokens,
     updateAPY,
 
     // Transaction state
